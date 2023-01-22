@@ -1,17 +1,21 @@
 import { App, ItemView, Platform, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
 
-import DiceRoller from "./ui/DIceRoller.svelte";
+import DiceRoller from './ui/DIceRoller.svelte';
 
 const VIEW_TYPE = "svelte-view";
 
 // Remember to rename these classes and interfaces!
 
-interface MyPluginSettings {
-    mySetting: string;
+interface ParagrapherSettings {
+    mySetting: string,
+    wpm: number, 
+    wordsPerSlide: number
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-    mySetting: 'default'
+const DEFAULT_SETTINGS: ParagrapherSettings = {
+    mySetting: 'default',
+    wpm: 200, 
+    wordsPerSlide: 10
 }
 
 
@@ -37,9 +41,9 @@ class MySvelteView extends ItemView {
     }
 }
 
-export default class MyPlugin extends Plugin {
+export default class Paragrapher extends Plugin {
     private view: MySvelteView;
-    settings: MyPluginSettings;
+    settings: ParagrapherSettings;
 
     async onload() {
         await this.loadSettings();
@@ -98,9 +102,9 @@ export default class MyPlugin extends Plugin {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-    plugin: MyPlugin;
+    plugin: Paragrapher;
 
-    constructor(app: App, plugin: MyPlugin) {
+    constructor(app: App, plugin: Paragrapher) {
         super(app, plugin);
         this.plugin = plugin;
     }
@@ -122,5 +126,30 @@ class SampleSettingTab extends PluginSettingTab {
                     this.plugin.settings.mySetting = value;
                     await this.plugin.saveSettings();
                 }));
+        new Setting(containerEl)
+            .setName('Words per minute')
+            .setDesc('Words per minute')
+            .addText(text => text
+                .setPlaceholder('Enter your wpm')
+                .setValue(this.plugin.settings.wpm.toString())
+                .onChange(async (value) => {
+                    this.plugin.settings.wpm = parseInt(value);
+                    await this.plugin.saveSettings();
+                }
+                ));
+        new Setting(containerEl)
+            .setName('Words per slide')
+            .setDesc('Words per slide')
+            .addText(text => text
+                .setPlaceholder('Enter your words per slide')
+                .setValue(this.plugin.settings.wordsPerSlide.toString())
+                .onChange(async (value) => {
+                    this.plugin.settings.wordsPerSlide = parseInt(value);
+                    await this.plugin.saveSettings();
+                }
+                ));
+                
+                
+
     }
 }

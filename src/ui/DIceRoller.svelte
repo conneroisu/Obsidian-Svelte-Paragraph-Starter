@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { TFile } from "obsidian";
+
+
     let diceSides = 6;
     let numDice = 1;
     let modifier = 0;
@@ -26,10 +29,20 @@
         result = temp;
     }
 
+    async export function parseParagraph(file: TFile): string {
+        let fileContents = await app.vault.cachedRead(file);
+        let paragraphs = fileContents.split("\n\n");
+        let paragraph = paragraphs[randomNumber(0, paragraphs.length - 1)];
+        return paragraph;
+    }
 
 </script>
 
+
 <div>
+    <h1 class="H1">Paragrapher</h1>
+    <br>
+
     <h1 class="H1">Dice Roller</h1>
     <br>
     <div class="Dice-Roller-Container">
